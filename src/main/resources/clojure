@@ -170,8 +170,9 @@ END
 fi
 
 # Set dir containing the installed files
-install_dir=PREFIX
-tools_cp="$install_dir/libexec/clojure-tools-${project.version}.jar"
+install_dir=/usr/lib/libexec/clojure
+share_dir=/usr/share/clojure
+tools_cp="${install_dir}/clojure-tools.jar"
 
 # Execute resolve-tags command
 if "$resolve_tags"; then
@@ -197,8 +198,9 @@ fi
 if [ ! -d "$config_dir" ]; then
   mkdir -p "$config_dir"
 fi
+# JS: why do we require executable rights on edn file?
 if [ ! -e "$config_dir/deps.edn" ]; then
-  cp "$install_dir/example-deps.edn" "$config_dir/deps.edn"
+  cp "$share_dir/example-deps.edn" "$config_dir/deps.edn"
 fi
 
 # Determine user cache directory
@@ -212,11 +214,12 @@ fi
 
 # Chain deps.edn in config paths. repro=skip config dir
 if "$repro"; then
-  config_paths="$install_dir/deps.edn
+  config_paths="$share_dir/deps.edn
 deps.edn"
 else
-  config_paths="$install_dir/deps.edn
-$config_dir/deps.edn deps.edn"
+  config_paths="$share_dir/deps.edn
+$config_dir/deps.edn
+deps.edn"
 fi
 config_str=$(echo -n "${config_paths}" | tr '\n' ',')
 
